@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 from itertools import product
 from typing import Union
@@ -95,8 +96,10 @@ class Deck:
     
     _all_cards = cards
 
-    def __init__(self):
+    def __init__(self, shuffle=True):
         self.cards = list(self._all_cards)
+        if shuffle:
+            self.shuffle()
 
     def __len__(self):
         return len(self.cards)
@@ -112,7 +115,7 @@ class Deck:
         return self.cards.pop()
     
     def sort(self) -> None:
-        pass
+        self.cards = list(sorted(self.cards))
 
     def shuffle(self) -> None:
-        pass
+        random.shuffle(self.cards)
