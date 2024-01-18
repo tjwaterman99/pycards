@@ -50,6 +50,7 @@ def test_card_ordering():
     assert ace_hearts > two_diamonds
 
 
+
 def test_card_repr():
     c = Card('kh')
     assert 'KH' in repr(c)

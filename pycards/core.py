@@ -4,6 +4,7 @@ from itertools import product
 from typing import Union
 
 
+
 class Suit(Enum):
     spades = 'S'
     clubs = 'C'
