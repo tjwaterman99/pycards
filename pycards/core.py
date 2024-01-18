@@ -1,7 +1,6 @@
 import random
 from enum import Enum
 from itertools import product
-from typing import Union
 
 
 class Suit(Enum):
@@ -118,6 +117,12 @@ class Deck:
     def __iter__(self):
         for card in self.cards:
             yield card
+
+    def __getitem__(self, index: int) -> Card:
+        return self.cards[index]
+
+    def __repr__(self):
+        return f"<Deck [{len(self)} cards]>"
 
     def draw(self) -> Card:
         return self.cards.pop()
