@@ -17,19 +17,19 @@ def test_ranks():
 
 
 def test_card_init():
-    c = Card('KH')
+    c = Card("KH")
     assert c.suit == Suit.hearts
     assert c.rank == Rank.king
 
-    c = Card('TC')
+    c = Card("TC")
     assert c.suit == Suit.clubs
     assert c.rank == Rank.ten
 
-    c = Card('2D')
+    c = Card("2D")
     assert c.suit == Suit.diamonds
     assert c.rank == Rank.two
 
-    c = Card('kh')
+    c = Card("kh")
     assert c.rank == Rank.king
     assert c.suit == Suit.hearts
 
@@ -39,34 +39,33 @@ def test_card_init():
 
 
 def test_card_ordering():
-    ace_spades = Card('AS')
-    ace_clubs = Card('AC')
-    king_diamonds = Card('KD')
-    two_diamonds = Card('2D')
-    ace_hearts = Card('AH')
+    ace_spades = Card("AS")
+    ace_clubs = Card("AC")
+    king_diamonds = Card("KD")
+    two_diamonds = Card("2D")
+    ace_hearts = Card("AH")
 
     assert ace_spades == ace_spades
     assert ace_spades > ace_clubs > king_diamonds > two_diamonds
     assert ace_hearts > two_diamonds
 
 
-
 def test_card_repr():
-    c = Card('kh')
-    assert 'KH' in repr(c)
+    c = Card("kh")
+    assert "KH" in repr(c)
 
 
 def test_card_str():
-    c = Card('as')
-    assert 'AS' == str(c)
+    c = Card("as")
+    assert "AS" == str(c)
 
 
 def test_deck():
     d = Deck()
     assert len(d) == 52
-    assert Card('2H') in d
-    assert max(d) == Card('AS')
-    assert min(d) == Card('2H')
+    assert Card("2H") in d
+    assert max(d) == Card("AS")
+    assert min(d) == Card("2H")
 
 
 def test_deck_draw():
