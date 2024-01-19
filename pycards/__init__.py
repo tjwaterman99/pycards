@@ -1,1 +1,1 @@
-from .core import Card, Suit, Rank, Deck, cards
+from .core import Card, Suit, Rank, Deck

@@ -3,28 +3,31 @@ from enum import Enum
 from itertools import product
 
 
-class Suit(Enum):
+class OrderedEnum(Enum):
+    def __eq__(self, other: "OrderedEnum"):
+        return self.value == other.value
+
+    def __gt__(self, other: "OrderedEnum"):
+        return self._member_names_.index(self.name) < self._member_names_.index(
+            other.name
+        )
+
+    def __ge__(self, other: "OrderedEnum"):
+        return self == other or self > other
+
+    # TODO this doesn't need to live here
+    def __str__(self):
+        return self.value
+
+
+class Suit(OrderedEnum):
     spades = "S"
     clubs = "C"
     diamonds = "D"
     hearts = "H"
 
-    def __eq__(self, other: "Suit"):
-        return self.value == other.value
 
-    def __gt__(self, other: "Suit"):
-        return self._member_names_.index(self.name) < self._member_names_.index(
-            other.name
-        )
-
-    def __ge__(self, other: "Suit"):
-        return self == other or self > other
-
-    def __str__(self):
-        return self.value
-
-
-class Rank(Enum):
+class Rank(OrderedEnum):
     ace = "A"
     king = "K"
     queen = "Q"
@@ -38,20 +41,6 @@ class Rank(Enum):
     four = "4"
     three = "3"
     two = "2"
-
-    def __eq__(self, other: "Rank") -> bool:
-        return self.value == other.value
-
-    def __gt__(self, other: "Rank") -> bool:
-        return self._member_names_.index(self.name) < self._member_names_.index(
-            other.name
-        )
-
-    def __ge__(self, other: "Rank") -> bool:
-        return self == other or self > other
-
-    def __str__(self):
-        return self.value
 
 
 class Card:
@@ -94,14 +83,8 @@ class Card:
         return hash(str(self))
 
 
-cards = frozenset([Card(f"{r}{s}") for s, r in product(Suit, Rank)])
-"""
-A frozenset of all cards
-"""
-
-
 class Deck:
-    _all_cards = cards
+    _all_cards = tuple(sorted(Card(f"{r}{s}") for s, r in product(Suit, Rank)))
 
     def __init__(self, shuffle=True):
         self.cards = list(self._all_cards)
