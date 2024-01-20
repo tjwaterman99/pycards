@@ -12,9 +12,9 @@ class OrderedEnum(Enum):
         return bool(self.value == other.value)
 
     def __gt__(self, other: "OrderedEnum") -> bool:
-        return self.__class__._member_names_.index(self.name) < self.__class__._member_names_.index(
-            other.name
-        )
+        return self.__class__._member_names_.index(
+            self.name
+        ) < self.__class__._member_names_.index(other.name)
 
     def __ge__(self, other: "OrderedEnum") -> bool:
         return self == other or self > other
@@ -60,7 +60,7 @@ class Card:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Card):
-            raise NotImplementedError        
+            raise NotImplementedError
         return bool(self.rank == other.rank and self.suit == other.suit)
 
     def __gt__(self, other: "Card") -> bool:
@@ -115,7 +115,7 @@ class Deck:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Deck):
-            raise NotImplementedError        
+            raise NotImplementedError
         if len(self) != len(other):
             return False
         # TODO: the type checking here isn't working with error:
