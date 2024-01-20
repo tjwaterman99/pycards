@@ -1,3 +1,4 @@
+import json
 import random
 from enum import Enum
 from itertools import product
@@ -54,18 +55,6 @@ class Card:
         self.rank = Rank(parsed[0])
         self.suit = Suit(parsed[1])
 
-    def parse(self, value: str):
-        if type(value) != str:
-            raise ValueError(
-                f"Card must be initialized with a string, received: {str(type(value))}"
-            )
-        if len(value) != 2:
-            raise ValueError(
-                f"Card must be initialized with a suit and rank, like `2H` or `AD`. Received: {str(value)}"
-            )
-        rank, suit = value.upper()
-        return Rank(rank), Suit(suit)
-
     def __eq__(self, other: "Card") -> bool:
         return self.rank == other.rank and self.suit == other.suit
 
@@ -86,6 +75,25 @@ class Card:
     def __hash__(self):
         return hash(str(self))
 
+    def parse(self, value: str):
+        if type(value) != str:
+            raise ValueError(
+                f"Card must be initialized with a string, received: {str(type(value))}"
+            )
+        if len(value) != 2:
+            raise ValueError(
+                f"Card must be initialized with a suit and rank, like `2H` or `AD`. Received: {str(value)}"
+            )
+        rank, suit = value.upper()
+        return Rank(rank), Suit(suit)
+
+    def serialize(self) -> str:
+        return json.dumps(str(self))
+
+    @classmethod
+    def deserialize(cls, value: str) -> "Card":
+        return cls(json.loads(value))
+
 
 class Deck:
     _all_cards = tuple(sorted(Card(f"{r}{s}") for s, r in product(Suit, Rank)))
@@ -97,6 +105,16 @@ class Deck:
 
     def __len__(self):
         return len(self.cards)
+
+    def __eq__(self, other: "Deck"):
+        if type(other) != Deck:
+            raise ValueError(f"Can not compare decks with type {type(other)}")
+        if len(self) != len(other):
+            return False
+        for c1, c2 in zip(self, other):
+            if c1 != c2:
+                return False
+        return True
 
     def __contains__(self, value: Card):
         return value in self.cards
@@ -119,3 +137,19 @@ class Deck:
 
     def shuffle(self) -> None:
         random.shuffle(self.cards)
+
+    def serialize(self) -> str:
+        container = {"cards": [str(c) for c in self.cards]}
+        return json.dumps(container)
+
+    @classmethod
+    def deserialize(cls, value: str) -> "Deck":
+        parsed = json.loads(value)
+        cards = [Card(c) for c in parsed["cards"]]
+        return cls.from_cards(cards=cards)
+
+    @classmethod
+    def from_cards(cls, cards: list[Card]) -> "Deck":
+        deck = cls()
+        deck.cards = cards
+        return deck

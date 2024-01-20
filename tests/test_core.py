@@ -1,3 +1,4 @@
+import json
 from pycards import Suit, Rank, Card, Deck
 
 
@@ -60,6 +61,16 @@ def test_card_str():
     assert "AS" == str(c)
 
 
+def test_card_serialization():
+    c = Card("as")
+    assert type(c.serialize()) == str
+    assert Card.deserialize(c.serialize()) == c
+
+    # Note: round tripping is not case insensitive
+    c = '"AS"'
+    assert Card.deserialize(c).serialize() == c
+
+
 def test_deck():
     d = Deck()
     assert len(d) == 52
@@ -72,3 +83,25 @@ def test_deck_draw():
     d = Deck()
     c = d.draw()
     assert c not in d
+
+
+def test_deck_shuffle():
+    d = Deck()
+    d.sort()
+    assert d.draw() == Card("AS")
+
+    copied = list(d.cards)
+    d.shuffle()
+    assert d.cards != copied
+
+    d.sort()
+    assert d.cards == copied
+
+
+def test_deck_serialization():
+    d = Deck()
+    d.draw()
+    assert d == Deck.deserialize(d.serialize())
+
+    deck = json.dumps({"cards": ["AS", "JC"]})
+    assert Deck.deserialize(deck).serialize() == deck
