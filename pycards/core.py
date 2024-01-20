@@ -150,6 +150,6 @@ class Deck:
 
     @classmethod
     def from_cards(cls, cards: list[Card]) -> "Deck":
-        deck = cls()
+        deck = cls(shuffle=False)
         deck.cards = cards
         return deck
