@@ -1,5 +1,6 @@
 import json
 import random
+from typing import Iterable
 from enum import Enum
 from itertools import product
 
@@ -10,17 +11,17 @@ class OrderedEnum(Enum):
             raise NotImplementedError
         return bool(self.value == other.value)
 
-    def __gt__(self, other: "OrderedEnum"):
-        return self._member_names_.index(self.name) < self._member_names_.index(
+    def __gt__(self, other: "OrderedEnum") -> bool:
+        return self.__class__._member_names_.index(self.name) < self.__class__._member_names_.index(
             other.name
         )
 
-    def __ge__(self, other: "OrderedEnum"):
+    def __ge__(self, other: "OrderedEnum") -> bool:
         return self == other or self > other
 
     # TODO this doesn't need to live here
-    def __str__(self):
-        return self.value
+    def __str__(self) -> str:
+        return str(self.value)
 
 
 class Suit(OrderedEnum):
@@ -57,8 +58,10 @@ class Card:
         self.rank = Rank(parsed[0])
         self.suit = Suit(parsed[1])
 
-    def __eq__(self, other: "Card") -> bool:
-        return self.rank == other.rank and self.suit == other.suit
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Card):
+            raise NotImplementedError        
+        return bool(self.rank == other.rank and self.suit == other.suit)
 
     def __gt__(self, other: "Card") -> bool:
         return self.rank > other.rank or (
@@ -68,16 +71,16 @@ class Card:
     def __ge__(self, other: "Card") -> bool:
         return self == other or self > other
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Card '{self.rank}{self.suit}'>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.rank}{self.suit}"
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(str(self))
 
-    def parse(self, value: str):
+    def parse(self, value: str) -> tuple[Rank, Suit]:
         if type(value) != str:
             raise ValueError(
                 f"Card must be initialized with a string, received: {str(type(value))}"
@@ -86,7 +89,9 @@ class Card:
             raise ValueError(
                 f"Card must be initialized with a suit and rank, like `2H` or `AD`. Received: {str(value)}"
             )
-        rank, suit = value.upper()
+        fvalue = value.upper()
+        rank = fvalue[0]
+        suit = fvalue[1]
         return Rank(rank), Suit(suit)
 
     def serialize(self) -> str:
@@ -100,35 +105,37 @@ class Card:
 class Deck:
     _all_cards = tuple(sorted(Card(f"{r}{s}") for s, r in product(Suit, Rank)))
 
-    def __init__(self, shuffle=True):
+    def __init__(self, shuffle: bool = True) -> None:
         self.cards = list(self._all_cards)
         if shuffle:
             self.shuffle()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.cards)
 
-    def __eq__(self, other: "Deck"):
-        if type(other) != Deck:
-            raise ValueError(f"Can not compare decks with type {type(other)}")
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Deck):
+            raise NotImplementedError        
         if len(self) != len(other):
             return False
-        for c1, c2 in zip(self, other):
+        # TODO: the type checking here isn't working with error:
+        # > error: No overload variant of "zip" matches argument types "Deck", "Deck"  [call-overload]
+        for c1, c2 in zip(self, other):  # type: ignore
             if c1 != c2:
                 return False
         return True
 
-    def __contains__(self, value: Card):
+    def __contains__(self, value: Card) -> bool:
         return value in self.cards
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[Card]:
         for card in self.cards:
             yield card
 
     def __getitem__(self, index: int) -> Card:
         return self.cards[index]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Deck [{len(self)} cards]>"
 
     def draw(self) -> Card:
