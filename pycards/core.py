@@ -23,7 +23,11 @@ class OrderedEnum(Enum):
     def __str__(self) -> str:
         return str(self.value)
 
+    def __hash__(self) -> int:
+        return hash(str(self))
 
+
+# Needs 2 bits
 class Suit(OrderedEnum):
     spades = "S"
     clubs = "C"
@@ -31,6 +35,7 @@ class Suit(OrderedEnum):
     hearts = "H"
 
 
+# Needs 4 bits to serialize efficiently
 class Rank(OrderedEnum):
     ace = "A"
     king = "K"
