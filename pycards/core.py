@@ -50,6 +50,11 @@ class Card:
         return Card(value)
 
     def __init__(self, value: str):
+        parsed = self.parse(value)
+        self.rank = Rank(parsed[0])
+        self.suit = Suit(parsed[1])
+
+    def parse(self, value: str):
         if type(value) != str:
             raise ValueError(
                 f"Card must be initialized with a string, received: {str(type(value))}"
@@ -59,8 +64,7 @@ class Card:
                 f"Card must be initialized with a suit and rank, like `2H` or `AD`. Received: {str(value)}"
             )
         rank, suit = value.upper()
-        self.suit = Suit(suit)
-        self.rank = Rank(rank)
+        return Rank(rank), Suit(suit)
 
     def __eq__(self, other: "Card") -> bool:
         return self.rank == other.rank and self.suit == other.suit
