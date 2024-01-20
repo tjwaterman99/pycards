@@ -5,8 +5,10 @@ from itertools import product
 
 
 class OrderedEnum(Enum):
-    def __eq__(self, other: "OrderedEnum"):
-        return self.value == other.value
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, OrderedEnum):
+            raise NotImplementedError
+        return bool(self.value == other.value)
 
     def __gt__(self, other: "OrderedEnum"):
         return self._member_names_.index(self.name) < self._member_names_.index(
