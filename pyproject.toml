@@ -6,7 +6,7 @@ authors = ["Tom Waterman <tjwaterman99@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.6"
 
 
 [tool.poetry.group.dev.dependencies]
